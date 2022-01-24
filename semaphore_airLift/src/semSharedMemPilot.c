@@ -142,6 +142,14 @@ static void flight (bool go)
     }
 
     /* insert your code here */
+    if(go == true){
+        sh->fSt.st.pilotStat=FLYING;
+    };
+    if(go == false){
+        sh->fSt.st.hostessStat=FLYING_BACK;
+    };
+
+    saveState(nFic, &(sh->fSt));
 
     if (semUp (semgid, sh->mutex) == -1) {                                                      /* exit critical region */
         perror ("error on the up operation for semaphore access (PT)");
@@ -191,6 +199,15 @@ static void waitUntilReadyToFlight ()
         exit (EXIT_FAILURE);
     }
 
+    // para add entra somente no fst
+    // salvar o estado com o saveState
+    // para mudar o estado entra no fst.st.piloStat
+    // para esperar copia a mesma coisa do sem down, mas ao inves de ser mutex
+    //  tem de ser up
+    sh->fSt.st.pilotStat=WAITING_FOR_BOARDING;
+    sh->fSt.nFlight+=1;
+    saveState(nFic, &(sh->fSt));
+
     /* insert your code here */
 
     if (semUp (semgid, sh->mutex) == -1) {                                                      /* exit critical region */
@@ -199,6 +216,10 @@ static void waitUntilReadyToFlight ()
     }
 
     /* insert your code here */
+    if (semDown (semgid, sh->readyToFlight) == -1){
+        perror("error on the down operation for semaphore access")
+        exit (EXIT_FAILURE);
+    }
 }
 
 /**
@@ -217,6 +238,7 @@ static void dropPassengersAtTarget ()
     }
 
     /* insert your code here */
+    sh->fSt.st.pilotStat = DROPING_PASSENGERS;
 
     if (semUp (semgid, sh->mutex) == -1)  {                                                   /* exit critical region */
         perror ("error on the up operation for semaphore access (PT)");
