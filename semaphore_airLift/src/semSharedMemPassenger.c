@@ -146,15 +146,9 @@ static void waitInQueue (unsigned int passengerId)
     }
 
     /* insert your code here */
-<<<<<<< HEAD
-     sh->fSt.nPassInQueue +=1;     
-     sh->fSt.st.passengerStat[passengerId]=IN_QUEUE;     
-     saveState(nFic, &(sh->fSt));
-=======
     sh->fSt.nPassInQueue +=1;
     sh->fSt.st.passengerStat[passengerId]=IN_QUEUE;
     saveState(nFic, &(sh->fSt));
->>>>>>> ba348c2ecb432c50e8c8e55892bf41fbacaee605
 
     if (semUp (semgid, sh->mutex) == -1)                                                      /* exit critical region */
     { perror ("error on the up operation for semaphore access (PG)");
