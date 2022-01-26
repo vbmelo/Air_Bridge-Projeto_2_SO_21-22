@@ -236,9 +236,10 @@ static void dropPassengersAtTarget ()
         perror ("error on the down operation for semaphore access (PT)");
         exit (EXIT_FAILURE);
     }
-        saveFlightArrived(nFic, &sh->fSt);
+        
         sh->fSt.st.pilotStat = DROPING_PASSENGERS;
         saveState(nFic, &(sh->fSt));
+        saveFlightArrived(nFic, &sh->fSt);
 
         while(sh->fSt.nPassengersInFlight[sh->fSt.nFlight-1] > 0){
             sh->fSt.nPassengersInFlight[sh->fSt.nFlight-1]--;
