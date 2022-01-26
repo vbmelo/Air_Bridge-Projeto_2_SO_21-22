@@ -156,7 +156,7 @@ static void waitForNextFlight ()
 
     /* insert your code here */
     if (semDown (semgid, sh->readyForBoarding) == -1){ // DOWN waiting for boarding
-        perror("error on the down operation for semaphore access")
+        perror("error on the down operation for semaphore access");
         exit (EXIT_FAILURE);
     }
 }
@@ -185,7 +185,7 @@ static void waitForPassenger ()
 
     /* insert your code here */
     if (semDown (semgid, sh->passengersInQueue) == -1){ // DOWN passengers in queue
-        perror("error on the down operation for semaphore access")
+        perror("error on the down operation for semaphore access");
         exit (EXIT_FAILURE);
     }
 }
@@ -205,7 +205,7 @@ static void waitForPassenger ()
 
 static bool checkPassport()
 {
-    bool last;
+    bool last = false;
 
     /* insert your code here */
 
@@ -223,20 +223,20 @@ static bool checkPassport()
         exit (EXIT_FAILURE);
     }
 
-    if (semUp (semgid, sh->passengersInQueue) == -1){ // UP id passengers in queue
-        perror("error on the down operation for semaphore access")
-        exit (EXIT_FAILURE);
-    }
+   
     
 
     if (semDown (semgid, sh->idShown) == -1){ // DOWN id shown
-        perror("error on the down operation for semaphore access")
+        perror("error on the down operation for semaphore access");
         exit (EXIT_FAILURE);
     }
 
-        /* insert your code here */
-        sh->fSt.passengerChecked = passengerId;
-        saveState(nFic,&sh->fSt);
+    if (semUp (semgid, sh->passengersInQueue) == -1){ // UP id passengers in queue
+        perror("error on the down operation for semaphore access");
+        exit (EXIT_FAILURE);
+    }
+
+        
 
     if (semDown (semgid, sh->mutex) == -1)  {                                                 /* enter critical region */
         perror ("error on the up operation for semaphore access (HT)");
@@ -247,8 +247,8 @@ static bool checkPassport()
     
 
     /* insert your code here */
-    if ( sh->fSt.nnPassInQueue == 0 || sh->fSt.nPassengersInFlight == MAXFC || sh->fSt.nPassengersInFlight >= MINFC ){
-        return true;
+    if ( nPassengersInQueue() == 0 || nPassengersInFlight() == MAXFC || nPassengersInFlight() >= MINFC ){
+        last = true;
     }
     
     if (semUp (semgid, sh->mutex) == -1) {                                                     /* exit critical region */
@@ -289,7 +289,7 @@ void  signalReadyToFlight()
 
     /* insert your code here */
      if (semUp (semgid, sh->readyToFlight) == -1){ // Up rerady to flight
-        perror("error on the down operation for semaphore access")
+        perror("error on the down operation for semaphore access");
         exit (EXIT_FAILURE);
     }
 

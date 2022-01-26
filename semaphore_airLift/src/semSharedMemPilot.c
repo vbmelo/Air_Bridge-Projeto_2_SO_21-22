@@ -141,13 +141,13 @@ static void flight (bool go)
         exit (EXIT_FAILURE);
     }
 
-    /* insert your code here */
-    if(go == true){
-        sh->fSt.st.pilotStat=FLYING;
-    };
-    if(go == false){
-        sh->fSt.st.hostessStat=FLYING_BACK;
-    };
+        /* insert your code here */
+        if(go == true){
+            sh->fSt.st.pilotStat=FLYING;
+        };
+        if(go == false){
+            sh->fSt.st.pilotStat=FLYING_BACK;
+        };
 
     saveState(nFic, &(sh->fSt));
 
@@ -176,7 +176,7 @@ static void signalReadyForBoarding ()
 
     /* insert your code here */
      if (semUp (semgid, sh->readyForBoarding) == -1){ // Up ready for boarding
-        perror("error on the down operation for semaphore access")
+        perror("error on the down operation for semaphore access");
         exit (EXIT_FAILURE);
     }
 
@@ -221,7 +221,7 @@ static void waitUntilReadyToFlight ()
 
     /* insert your code here */
     if (semDown (semgid, sh->readyToFlight) == -1){
-        perror("error on the down operation for semaphore access")
+        perror("error on the down operation for semaphore access");
         exit (EXIT_FAILURE);
     }
 }
@@ -241,8 +241,8 @@ static void dropPassengersAtTarget ()
         exit (EXIT_FAILURE);
     }
 
-        if (semUp (semgid, sh->passengersWaitInFlight == -1){
-            perror("error on the down operation for semaphore access")
+        if (semUp (semgid, sh->passengersWaitInFlight == -1)){
+            perror("error on the down operation for semaphore access");
             exit (EXIT_FAILURE);
         }
 
@@ -264,7 +264,7 @@ static void dropPassengersAtTarget ()
 
         /* insert your code here */
         if (semDown (semgid, sh->planeEmpty) == -1){
-            perror("error on the down operation for semaphore access")
+            perror("error on the down operation for semaphore access");
             exit (EXIT_FAILURE);
         }
 

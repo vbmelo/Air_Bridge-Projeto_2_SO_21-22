@@ -154,18 +154,20 @@ static void waitInQueue (unsigned int passengerId)
             sh->fSt.nPassInQueue +=1;
             saveState(nFic, &(sh->fSt));
 
+                /* insert your code here */
+            sh->fSt.passengerChecked = passengerId;
+            saveState(nFic,&sh->fSt);
+
+            if (semUp (semgid, sh->idShown) == -1){ // UP id shown
+                perror("error on the down operation for semaphore access");
+                exit (EXIT_FAILURE);
+            }
+
         if (semDown (semgid, sh->passengersWaitInQueue) == -1) {                                                  /* enter critical region */
             perror ("error on the down operation for semaphore access (PG)");
             exit (EXIT_FAILURE);
         }  
 
-            if (semUp (semgid, sh->idShown) == -1){ // UP id shown
-                perror("error on the down operation for semaphore access");;
-                exit (EXIT_FAILURE);
-            }
-        
-
-         
 
     if (semUp (semgid, sh->mutex) == -1)                                                      /* exit critical region */
     { perror ("error on the up operation for semaphore access (PG)");
