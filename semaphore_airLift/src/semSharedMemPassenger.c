@@ -217,18 +217,25 @@ static void waitUntilDestination (unsigned int passengerId)
             sh->fSt.nPassInFlight++;
             saveState(nFic,&sh->fSt);
 
+            sh->fSt.st.passengerStat[passengerId]=AT_DESTINATION; // Chegou ao destino
+            // sh->fSt.nPassInFlight--; //  diminuiu o numero de passageiros no voo
+            saveState(nFic,&sh->fSt); // salvou o estado.
+
+            if (sh->fSt.nPassInFlight == 0){
+                 if (semUp (semgid, sh->planeEmpty) == -1) {                                                  /* enter critical region */
+                    perror ("error on the down operation for semaphore access (PG)");
+                    exit (EXIT_FAILURE);
+                }
+            }
+
     if (semUp (semgid, sh->mutex) == -1) {                                                  /* enter critical region */
         perror ("error on the down operation for semaphore access (PG)");
         exit (EXIT_FAILURE);
     }
-        sh->fSt.st.passengerStat[passengerId]=AT_DESTINATION; // Chegou ao destino
-        sh->fSt.nPassInFlight--; //  diminuiu o numero de passageiros no voo
-        saveState(nFic,&sh->fSt); // salvou o estado.
 
-    if (semUp (semgid, sh->planeEmpty) == -1) {                                                  /* enter critical region */
-        perror ("error on the down operation for semaphore access (PG)");
-        exit (EXIT_FAILURE);
-    }
+     
+
+   
         
 
 }

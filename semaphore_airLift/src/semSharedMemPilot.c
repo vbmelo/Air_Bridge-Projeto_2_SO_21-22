@@ -244,6 +244,7 @@ static void dropPassengersAtTarget ()
 
         /* insert your code here */
         sh->fSt.st.pilotStat = DROPING_PASSENGERS;
+        sh->fSt.nPassengersInFlight[sh->fSt.nFlight-1]--;
         saveState(nFic, &(sh->fSt));
 
     if (semUp (semgid, sh->mutex) == -1)  {                                                   /* exit critical region */
@@ -258,7 +259,7 @@ static void dropPassengersAtTarget ()
         exit (EXIT_FAILURE);
     }
 
-        /* insert your code here */
+        
         if (semDown (semgid, sh->planeEmpty) == -1){
             perror("error on the down operation for semaphore access");
             exit (EXIT_FAILURE);
