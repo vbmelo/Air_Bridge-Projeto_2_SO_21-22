@@ -146,7 +146,7 @@ static void flight (bool go)
             sh->fSt.st.pilotStat=FLYING;
         };
         if(go == false){
-            sh->fSt.st.pilotStat=FLYING_BACK; //TESTE
+            sh->fSt.st.pilotStat=FLYING_BACK;
         };
 
     saveState(nFic, &(sh->fSt));
@@ -175,17 +175,21 @@ static void signalReadyForBoarding ()
     }
 
     /* insert your code here */
+
+    sh->fSt.st.pilotStat=READY_FOR_BOARDING;
+    sh->fSt.nFlight++;
+    saveState(nFic, &(sh->fSt));
+
      if (semUp (semgid, sh->readyForBoarding) == -1){ // Up ready for boarding
         perror("error on the down operation for semaphore access");
         exit (EXIT_FAILURE);
     }
 
+
     if (semUp (semgid, sh->mutex) == -1) {                                                      /* exit critical region */
         perror ("error on the up operation for semaphore access (PT)");
         exit (EXIT_FAILURE);
     }
-
-    /* insert your code here */
 
 }
 
@@ -203,27 +207,19 @@ static void waitUntilReadyToFlight ()
         exit (EXIT_FAILURE);
     }
 
-    // para add entra somente no fst
-    // salvar o estado com o saveState
-    // para mudar o estado entra no fst.st.piloStat
-    // para esperar copia a mesma coisa do sem down, mas ao inves de ser mutex
-    //  tem de ser up
     sh->fSt.st.pilotStat=WAITING_FOR_BOARDING;
-    sh->fSt.nFlight+=1;
     saveState(nFic, &(sh->fSt));
 
-    /* insert your code here */
+    if (semDown (semgid, sh->readyToFlight) == -1){
+        perror("error on the down operation for semaphore access");
+        exit (EXIT_FAILURE);
+    }
 
     if (semUp (semgid, sh->mutex) == -1) {                                                      /* exit critical region */
         perror ("error on the up operation for semaphore access (PT)");
         exit (EXIT_FAILURE);
     }
-
-    /* insert your code here */
-    if (semDown (semgid, sh->readyToFlight) == -1){
-        perror("error on the down operation for semaphore access");
-        exit (EXIT_FAILURE);
-    }
+    
 }
 
 /**
