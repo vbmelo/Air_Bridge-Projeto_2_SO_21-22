@@ -146,7 +146,7 @@ static void flight (bool go)
             sh->fSt.st.pilotStat=FLYING;
         };
         if(go == false){
-            sh->fSt.st.pilotStat=FLYING_BACK;
+            sh->fSt.st.pilotStat=FLYING_BACK; //TESTE
         };
 
     saveState(nFic, &(sh->fSt));
