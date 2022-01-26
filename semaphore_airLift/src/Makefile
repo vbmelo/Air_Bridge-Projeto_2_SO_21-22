@@ -21,6 +21,7 @@ pt:   	    passenger_bin  hostess_bin pilot       main clean
 ht:   	    passenger_bin  hostess     pilot_bin   main clean
 pg_pt:		passenger	   hostess_bin pilot	   main clean
 pg_ht:		passenger      hostess     pilot_bin   main clean
+pt_ht:		passenger_bin  hostess     pilot   	   main clean
 all_bin:	passenger_bin  hostess_bin pilot_bin   main clean
 
 pilot:	$(PILOT).o $(OBJS)
