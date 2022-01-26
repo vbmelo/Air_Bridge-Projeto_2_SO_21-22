@@ -142,11 +142,11 @@ static void flight (bool go)
     }
 
         /* insert your code here */
-        if(go == true){
-            sh->fSt.st.pilotStat=FLYING;
+        if(!go){
+            sh->fSt.st.pilotStat=FLYING_BACK;
         }
         else{
-            sh->fSt.st.pilotStat=FLYING_BACK;
+            sh->fSt.st.pilotStat=FLYING;
         };
 
         saveState(nFic, &(sh->fSt));
