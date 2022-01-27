@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
  *
  */
 
-static void waitForNextFlight()
+static void waitForNextFlight() //Correta!
 {
     if (semDown(semgid, sh->mutex) == -1)
     { /* enter critical region */
@@ -167,7 +167,7 @@ static void waitForNextFlight()
 
     if (semDown(semgid, sh->readyForBoarding) == -1)
     { /* Wait for Pilot to be ready for boarding */
-        perror("error on the up operation for semaphore access (PT)");
+        perror("error on the up operation for semaphore access (HT)");
         exit(EXIT_FAILURE);
     }
 }
@@ -179,7 +179,7 @@ static void waitForNextFlight()
  *  The internal state should be saved.
  */
 
-static void waitForPassenger()
+static void waitForPassenger() // CORRETA!
 {
 
     if (semDown(semgid, sh->mutex) == -1) /* enter critical region */
@@ -235,7 +235,7 @@ static bool checkPassport()
 
     sh->fSt.st.hostessStat = CHECK_PASSPORT;
 
-    if (nPassengersInFlight() == MAXFC - 1 || (nPassengersInQueue() == 1 && nPassengersInFlight() >= MINFC - 1) || sh->fSt.totalPassBoarded == N - 1)
+    if (nPassengersInFlight() == MAXFC - 1 || (nPassengersInQueue() == 0 && nPassengersInFlight() >= MINFC - 1) || sh->fSt.totalPassBoarded == N - 1)
     {
         last = true;
     }
@@ -265,6 +265,7 @@ static bool checkPassport()
 
     // "Save State"
     savePassengerChecked(nFic, &sh->fSt);
+    saveState(nFic, &sh->fSt);
 
     if (semUp(semgid, sh->mutex) == -1)
     {
@@ -305,23 +306,35 @@ void signalReadyToFlight()
     }
 
     sh->fSt.st.hostessStat = READY_TO_FLIGHT;
-    sh->fSt.nPassengersInFlight[sh->fSt.nFlight - 1] = nPassengersInFlight();
+    saveState(nFic, &sh->fSt);
+
+    int i = 0;
+    for (int j = 0; j < sh->fSt.nFlight-1; j++)
+    {
+        i = i + sh->fSt.nPassengersInFlight[sh->fSt.nFlight+j];
+    }
+    sh->fSt.nPassengersInFlight[sh->fSt.nFlight - 1] = sh->fSt.totalPassBoarded - i;
+    saveFlightDeparted(nFic, &sh->fSt);
+
+
+    // sh->fSt.nPassengersInFlight[sh->fSt.nFlight - 1] = nPassengersInFlight();
+    // saveFlightDeparted(nFic, &sh->fSt);
+
 
     if (sh->fSt.totalPassBoarded == N)
     {
         sh->fSt.finished = true;
     }
-    saveState(nFic, &sh->fSt);
-    saveFlightDeparted(nFic, &sh->fSt);
+    // saveState(nFic, &sh->fSt);
 
     if (semUp(semgid, sh->mutex) == -1)
-    { /* exit critical region */
+    { 
         perror("error on the up operation for semaphore access (HT)");
         exit(EXIT_FAILURE);
     }
 
     if (semUp(semgid, sh->readyToFlight) == -1)
-    { /* Signal Pilot */
+    { 
         perror("error on the up operation for semaphore access (PT)");
         exit(EXIT_FAILURE);
     }

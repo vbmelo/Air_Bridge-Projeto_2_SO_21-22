@@ -163,8 +163,9 @@ static void waitInQueue (unsigned int passengerId)
             exit (EXIT_FAILURE);
         }
 
+        // NOT HERE...>
         sh->fSt.passengerChecked = passengerId;
-        saveState(nFic,&sh->fSt);
+        saveState(nFic,&sh->fSt); 
 
     if (semUp (semgid, sh->mutex) == -1)                                                      /* exit critical region */
     { perror ("error on the up operation for semaphore access (PG)");
