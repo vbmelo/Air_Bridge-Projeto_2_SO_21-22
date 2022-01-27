@@ -4,7 +4,7 @@ version=5
 
 /core
 blocksize=0x400
-offset=0x400f3f
+offset=0x401135
 
 /core/analysis
 
@@ -3816,7 +3816,7 @@ asm.os=linux
 asm.parser=x86.pseudo
 asm.payloads=false
 asm.pcalign=0
-asm.pseudo=false
+asm.pseudo=0
 asm.refptr=false
 asm.reloff=false
 asm.reloff.flags=false
@@ -3893,7 +3893,7 @@ cfg.plugins=true
 cfg.prefixdump=dump
 cfg.seek.histsize=63
 cfg.seek.silent=false
-cfg.user=pid22516
+cfg.user=pid22824
 cfg.wseek=false
 cmd.demangle=false
 cmd.depth=10
