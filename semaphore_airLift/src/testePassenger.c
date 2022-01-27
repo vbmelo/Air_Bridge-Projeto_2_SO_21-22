@@ -149,7 +149,7 @@ int64_t waitUntilDestination(long passengerId)
 
 //  DECOMPILING W GHIDRA
 
-void waitInQueue(long arg1)
+void waitInQueue(long passengerId)
 {
     int32_t iVar1;
     long var_4h;
@@ -170,8 +170,8 @@ void waitInQueue(long arg1)
         // WARNING: Subroutine does not return
         exit(1);
     }
-    semUp(semgid, (uint64_t) * (uint32_t *)(_sh + 0x14));
-    semDown(semgid, (uint64_t) * (uint32_t *)((int64_t)_sh + 0xa4));
+    semUp(semgid, sh->passengersInQueue);
+    semDown(semgid, sh->passengersWaitInQueue);
 
     if (semDown(semgid, sh->mutex) == -1)
     {
@@ -188,17 +188,17 @@ void waitInQueue(long arg1)
         // WARNING: Subroutine does not return
         exit(1);
     }
-    *(int32_t *)(_sh + 0x13) = (int32_t)arg1;
+    sh->fSt.passengerChecked = passengerId;
     semUp(semgid, (uint64_t) * (uint32_t *)((int64_t)_sh + 0xb4));
     return;
 }
 
-void waitUntilDestination(long arg1)
+void waitUntilDestination(long passengerId)
 {
     int32_t iVar1;
     long var_4h;
 
-    semDown(semgid, (uint64_t) * (uint32_t *)(_sh + 0x15));
+    semDown(semgid, sh->passengersWaitInFlight); //DOWN no  passengerWaitInFlight
     if (semDown(semgid, sh->mutex) == -1)
     {
         perror("error on the down operation for semaphore access (PG)");
@@ -206,11 +206,11 @@ void waitUntilDestination(long arg1)
         exit(1);
     }
     sh->fSt.st.passengerStat[passengerId] = 3;
-    sh->fSt.nPassInFligh) = sh->fSt.nPassInFligh) + -1;
-    saveState((int64_t)nFic, _sh);
-    if (sh->fSt.nPassInFligh) == 0)
+    sh->fSt.nPassInFligh = sh->fSt.nPassInFligh + -1;
+    saveState(nFic, &sh->fSt);
+    if (sh->fSt.nPassInFligh == 0)
         {
-            semUp(semgid, (uint64_t) * (uint32_t *)(_sh + 0x17));
+            semUp(semgid, sh->planeEmpty);
         }
     if (semUp(semgid, sh->mutex) == -1)
     {
@@ -221,47 +221,47 @@ void waitUntilDestination(long arg1)
     return;
 }
 
-void waitInQueue(long arg1)
+void waitInQueue(long passengerId)
 {
     int32_t iVar1;
     long var_4h;
 
-    iVar1 = semDown((uint64_t)_semgid, (uint64_t) * (uint32_t *)((int64_t)_sh + 0x9c));
+    iVar1 = semDown((semgid, sh->mutex));
     if (iVar1 == -1)
     {
         perror("error on the down operation for semaphore access (PG)");
         // WARNING: Subroutine does not return
         exit(1);
     }
-    *(int32_t *)(_sh + 0x11) = *(int32_t *)(_sh + 0x11) + 1;
-    *(undefined4 *)((int64_t)_sh + (arg1 & 0xffffffffU) * 4 + 8) = 1;
-    saveState((int64_t)nFic, _sh);
-    iVar1 = semUp((uint64_t)_semgid, (uint64_t) * (uint32_t *)((int64_t)_sh + 0x9c));
+    sh->fSt.nPassInQueue = sh->fSt.nPassInQueue + 1;
+    sh->fSt.st.passengerStat[passengerId] = 1; //  in queue
+    saveState(nFic, &sh->fSt);
+    iVar1 = semUp((semgid, sh->mutex));
     if (iVar1 == -1)
     {
         perror("error on the up operation for semaphore access (PG)");
         // WARNING: Subroutine does not return
         exit(1);
     }
-    semUp((uint64_t)_semgid, (uint64_t) * (uint32_t *)(_sh + 0x14));
-    semDown((uint64_t)_semgid, (uint64_t) * (uint32_t *)((int64_t)_sh + 0xa4));
-    iVar1 = semDown((uint64_t)_semgid, (uint64_t) * (uint32_t *)((int64_t)_sh + 0x9c));
+    semUp((semgid, sh->passengersInQueue));
+    semDown((semgid, sh->passengersWaitInQueue));
+    iVar1 = semDown((semgid, sh->mutex));
     if (iVar1 == -1)
     {
         perror("error on the down operation for semaphore access (PG)");
         // WARNING: Subroutine does not return
         exit(1);
     }
-    *(undefined4 *)((int64_t)_sh + (arg1 & 0xffffffffU) * 4 + 8) = 2;
-    saveState((int64_t)nFic, _sh);
-    iVar1 = semUp((uint64_t)_semgid, (uint64_t) * (uint32_t *)((int64_t)_sh + 0x9c));
+    sh->fSt.st.passengerStat[passengerId] = 2; // in flight
+    saveState(nFic, &sh->fSt);
+    iVar1 = semUp((semgid, sh->mutex));
     if (iVar1 == -1)
     {
         perror("error on the down operation for semaphore access (PG)");
         // WARNING: Subroutine does not return
         exit(1);
     }
-    *(int32_t *)(_sh + 0x13) = (int32_t)arg1;
-    semUp((uint64_t)_semgid, (uint64_t) * (uint32_t *)((int64_t)_sh + 0xb4));
+    sh->fSt.passengerChecked = passengerId;
+    semUp((semgid, sh->idShown));
     return;
 }

@@ -26,8 +26,14 @@ sh->fSt.finished = *(undefined *)((int64_t)_sh + 0x94)
 
 sh->fSt.nFlight = *(int32_t *)((int64_t)_sh + 0x84)
 
+sh->fSt.passengerChecked = *(int32_t *)(_sh + 0x13)
+
+sh->fSt.st.passengerStat[passengerId] = *(undefined4 *)((int64_t)_sh + (passengerId & 0xffffffffU) * 4 + 8)
 
 
+semgid, sh->passengersWaitInFlight = semgid, (uint64_t) * (uint32_t *)(_sh + 0x15)
+
+semgid, sh->planeEmpty = semgid, (uint64_t) * (uint32_t *)(_sh + 0x17)
 
 
 
