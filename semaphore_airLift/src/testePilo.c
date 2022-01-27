@@ -291,3 +291,61 @@ static void dropPassengersAtTarget ()
         exit (EXIT_FAILURE);
     }
 }
+
+
+void waitUntilReadyToFlight(void)
+{
+    int32_t iVar1;
+    
+    iVar1 = semDown((uint64_t)_semgid, (uint64_t)*(uint32_t *)((int64_t)_sh + 0x9c));
+    if (iVar1 == -1) {
+        perror("error on the up operation for semaphore access (PT)");
+    // WARNING: Subroutine does not return
+        exit(1);
+    }
+    *(undefined4 *)_sh = 2;
+    saveState((int64_t)nFic, _sh);
+    iVar1 = semUp((uint64_t)_semgid, (uint64_t)*(uint32_t *)((int64_t)_sh + 0x9c));
+    if (iVar1 == -1) {
+        perror("error on the up operation for semaphore access (PT)");
+    // WARNING: Subroutine does not return
+        exit(1);
+    }
+    iVar1 = semDown((uint64_t)_semgid, (uint64_t)*(uint32_t *)(_sh + 0x16));
+    if (iVar1 == -1) {
+        perror("error on the down operation for semaphore readyToFLight (PT)");
+    // WARNING: Subroutine does not return
+        exit(1);
+    }
+    return;
+}
+
+
+void signalReadyForBoarding(void)
+{
+    int32_t iVar1;
+    
+    iVar1 = semDown((uint64_t)_semgid, (uint64_t)*(uint32_t *)((int64_t)_sh + 0x9c));
+    if (iVar1 == -1) {
+        perror("error on the up operation for semaphore access (PT)");
+    // WARNING: Subroutine does not return
+        exit(1);
+    }
+    *(undefined4 *)_sh = 1;
+    *(int32_t *)((int64_t)_sh + 0x84) = *(int32_t *)((int64_t)_sh + 0x84) + 1;
+    saveState((int64_t)nFic, _sh);
+    saveStartBoarding((int64_t)nFic, (int64_t)_sh);
+    iVar1 = semUp((uint64_t)_semgid, (uint64_t)*(uint32_t *)((int64_t)_sh + 0x9c));
+    if (iVar1 == -1) {
+        perror("error on the up operation for semaphore access (PT)");
+    // WARNING: Subroutine does not return
+        exit(1);
+    }
+    iVar1 = semUp((uint64_t)_semgid, (uint64_t)*(uint32_t *)((int64_t)_sh + 0xac));
+    if (iVar1 == -1) {
+        perror("error on the up operation for semaphore access (PT)");
+    // WARNING: Subroutine does not return
+        exit(1);
+    }
+    return;
+}
