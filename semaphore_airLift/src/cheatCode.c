@@ -35,6 +35,10 @@ semgid, sh->passengersWaitInFlight = semgid, (uint64_t) * (uint32_t *)(_sh + 0x1
 
 semgid, sh->planeEmpty = semgid, (uint64_t) * (uint32_t *)(_sh + 0x17)
 
+sh->fSt.st.pilotStat = *(undefined4 *)_sh
 
+semgid, sh->readyForBoarding = (uint64_t)_semgid, (uint64_t)*(uint32_t *)((int64_t)_sh + 0xac)
+
+semgid, sh->readyToFlight = (uint64_t)_semgid, (uint64_t)*(uint32_t *)(_sh + 0x16)
 
 
