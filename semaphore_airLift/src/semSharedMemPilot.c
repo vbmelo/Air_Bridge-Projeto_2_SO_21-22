@@ -151,7 +151,7 @@ static void flight(bool go)
     }
 
     /* insert your code here */
-    if (!go)
+    if (go)
     {
         sh->fSt.st.pilotStat = FLYING_BACK;
     }
@@ -254,10 +254,22 @@ static void dropPassengersAtTarget()
     sh->fSt.st.pilotStat = DROPING_PASSENGERS;
     saveState(nFic, &(sh->fSt));
 
-    while (sh->fSt.nPassengersInFlight[sh->fSt.nFlight - 1] > 0)
-    {
-        sh->fSt.nPassengersInFlight[sh->fSt.nFlight - 1]--;
-    }
+    while (sh->fSt.nPassInFlight > 0)
+        {
+            if (semUp(semgid, sh->passengersWaitInFlight == -1))
+            {
+                perror("error on the down operation for semaphore access (PT)");
+                exit(EXIT_FAILURE);
+            }
+            sh->fSt.nPassInFlight--;
+        }
+    // for (int num = sh->fSt.nPassInFlight; 0 < num; num--) {
+    //     if (semUp (semgid, sh->passengersWaitInFlight == -1)){
+    //         perror("error on the down operation for semaphore access (PT)");
+    //         exit (EXIT_FAILURE);
+    //     }
+
+    // }
 
     if (semUp(semgid, sh->mutex) == -1)
     { /* exit critical region */
@@ -267,7 +279,7 @@ static void dropPassengersAtTarget()
 
     if (semDown(semgid, sh->planeEmpty) == -1)
     {
-        perror("error on the down operation for semaphore access");
+        perror("error on the down operation for semaphore PlaneEmpty access (PT)");
         exit(EXIT_FAILURE);
     }
 
@@ -276,7 +288,8 @@ static void dropPassengersAtTarget()
         perror("error on the down operation for semaphore access (PT)");
         exit(EXIT_FAILURE);
     }
-    
+
+
     saveFlightReturning(nFic, &sh->fSt);
 
     if (semUp(semgid, sh->mutex) == -1)
@@ -285,3 +298,4 @@ static void dropPassengersAtTarget()
         exit(EXIT_FAILURE);
     }
 }
+
