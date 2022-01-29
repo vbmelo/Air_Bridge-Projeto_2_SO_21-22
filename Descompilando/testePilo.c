@@ -281,10 +281,7 @@ static void dropPassengersAtTarget ()
             exit (EXIT_FAILURE);
         }
         
-        if (sh->fSt.nPassengersInFlight == 0){
-            sh->fSt.st.pilotStat = FLYING_BACK;
-            saveFlightReturning(nFic, &sh->fSt);
-        }
+        
 
     if (semUp (semgid, sh->mutex) == -1)  {                                                   /* exit critical region */
         perror ("error on the up operation for semaphore access (PT)");
