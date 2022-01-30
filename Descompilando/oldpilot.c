@@ -154,12 +154,10 @@ static void flight(bool go)
     if (!go)
     {
         sh->fSt.st.pilotStat = FLYING_BACK;
-         saveFlightReturning(nFic,&sh->fSt);
     }
     else
     {
         sh->fSt.st.pilotStat = FLYING;
-         saveFlightDeparted(nFic,&sh->fSt);
     };
 
     saveState(nFic, &(sh->fSt));
@@ -192,7 +190,7 @@ static void signalReadyForBoarding()
     sh->fSt.st.pilotStat = READY_FOR_BOARDING;
     sh->fSt.nFlight++;
     saveState(nFic, &sh->fSt);
-    saveStartBoarding(nFic, &sh->fSt);
+    // saveStartBoarding(nFic, &sh->fSt);
 
     if (semUp(semgid, sh->mutex) == -1)
     { /* exit critical region */
@@ -252,15 +250,8 @@ static void dropPassengersAtTarget()
         perror("error on the down operation for semaphore access (PT)");
         exit(EXIT_FAILURE);
     }
-    for(int i=0; i< sh->fSt.nPassengersInFlight[sh->fSt.nFlight-1];i++){
-        if (semUp (semgid, sh->passengersWaitInFlight) == -1)  {                                                   
-            perror ("error on the up operation for semaphore access (PT)");
-            exit (EXIT_FAILURE);
-        }
-    }
-    
+    // saveFlightArrived(nFic, &sh->fSt);
     sh->fSt.st.pilotStat = DROPING_PASSENGERS;
-    saveFlightArrived(nFic, &sh->fSt);
     saveState(nFic, &(sh->fSt));
 
     if (semUp(semgid, sh->mutex) == -1)
@@ -269,7 +260,12 @@ static void dropPassengersAtTarget()
         exit(EXIT_FAILURE);
     }
 
-    
+    for(int i=0; i< sh->fSt.nPassengersInFlight[sh->fSt.nFlight-1];i++){
+        if (semUp (semgid, sh->passengersWaitInFlight) == -1)  {                                                   
+            perror ("error on the up operation for semaphore access (PT)");
+            exit (EXIT_FAILURE);
+        }
+    }
 
     if (semDown (semgid, sh->planeEmpty) == -1) {                                                  
         perror ("error on the down operation for semaphore access (PT)");
@@ -282,9 +278,7 @@ static void dropPassengersAtTarget()
         exit(EXIT_FAILURE);
     }
     
-    if(sh->fSt.totalPassBoarded == N){
-        sh->fSt.finished = 1;
-    }
+    saveFlightReturning(nFic, &sh->fSt);
 
     if (semUp(semgid, sh->mutex) == -1)
     { /* exit critical region */

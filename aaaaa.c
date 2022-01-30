@@ -146,7 +146,9 @@ static void waitForNextFlight ()
         exit (EXIT_FAILURE);
     }
         
+        // Update State
         sh->fSt.st.hostessStat = WAIT_FOR_FLIGHT;
+        // Save State
         saveState(nFic, &sh->fSt);
     
     if (semUp (semgid, sh->mutex) == -1)                                                   /* exit critical region */
@@ -179,7 +181,9 @@ static void waitForPassenger ()
         exit (EXIT_FAILURE);
     }
 
+        // Update State
         sh->fSt.st.hostessStat = WAIT_FOR_PASSENGER;
+        // Save State
         saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                  /* exit critical region */
@@ -269,6 +273,7 @@ static bool checkPassport()
         exit (EXIT_FAILURE);
     }
 
+    /* insert your code here */                  // dk what to put here
 
     return last;
 }
@@ -299,13 +304,16 @@ void  signalReadyToFlight()
         exit (EXIT_FAILURE);
     }
 
+    // Updating state and number of passengers departing
     sh->fSt.st.hostessStat = READY_TO_FLIGHT;
     sh->fSt.nPassengersInFlight[sh->fSt.nFlight-1] = nPassengersInFlight();
 
+    // Checks if all passengers have boarded
     if(sh->fSt.totalPassBoarded == N){
         sh->fSt.finished = true;
     }
 
+    // Save State 
     saveState(nFic, &sh->fSt);
     saveFlightDeparted(nFic, &sh->fSt);
 
