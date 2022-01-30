@@ -225,15 +225,12 @@ static bool checkPassport()
 
     }
 
-        // Update State
         sh->fSt.st.hostessStat = CHECK_PASSPORT;
 
-        // Check departing conditions 
         if(nPassengersInFlight() == MAXFC-1 || (nPassengersInQueue() == 1 && nPassengersInFlight() >= MINFC-1) || sh->fSt.totalPassBoarded == N-1){
             last = true;
         }
 
-        // Save State
         saveState(nFic, &sh->fSt);
 
 
@@ -255,12 +252,9 @@ static bool checkPassport()
 
     }
 
-        // Updating variables
         sh->fSt.nPassInQueue--;
         sh->fSt.nPassInFlight++; 
         sh->fSt.totalPassBoarded++; 
-
-        // "Save State"
         savePassengerChecked(nFic, &sh->fSt);
 
 
